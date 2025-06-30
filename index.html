@@ -1,0 +1,535 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dylan's Training Journey</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            min-height: 100vh;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #ff7849 0%, #ff5722 100%);
+            color: white;
+            padding: 20px;
+            border-radius: 15px;
+            margin-bottom: 30px;
+            box-shadow: 0 10px 30px rgba(255, 120, 73, 0.3);
+        }
+
+        .app-title {
+            font-size: 2.5em;
+            font-weight: 700;
+            margin-bottom: 10px;
+        }
+
+        .puppy-info {
+            font-size: 1.2em;
+            opacity: 0.9;
+        }
+
+        .login-section {
+            background: white;
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 15px 35px rgba(0,0,0,0.1);
+            margin-bottom: 30px;
+        }
+
+        .user-buttons {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+        }
+
+        .user-btn {
+            flex: 1;
+            min-width: 120px;
+            padding: 15px 25px;
+            border: 2px solid #1a237e;
+            background: white;
+            color: #1a237e;
+            border-radius: 10px;
+            cursor: pointer;
+            font-size: 1.1em;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+
+        .user-btn:hover {
+            background: #1a237e;
+            color: white;
+            transform: translateY(-2px);
+        }
+
+        .user-btn.active {
+            background: #1a237e;
+            color: white;
+        }
+
+        .current-user {
+            text-align: center;
+            color: #1a237e;
+            font-weight: 600;
+            margin-top: 15px;
+        }
+
+        .nav-tabs {
+            display: flex;
+            background: white;
+            border-radius: 15px;
+            padding: 5px;
+            margin-bottom: 30px;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+            overflow-x: auto;
+        }
+
+        .nav-tab {
+            flex: 1;
+            min-width: 120px;
+            padding: 15px 20px;
+            text-align: center;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-weight: 600;
+            color: #666;
+            white-space: nowrap;
+        }
+
+        .nav-tab:hover {
+            background: rgba(255, 120, 73, 0.1);
+            color: #ff7849;
+        }
+
+        .nav-tab.active {
+            background: #ff7849;
+            color: white;
+        }
+
+        .content-section {
+            display: none;
+        }
+
+        .content-section.active {
+            display: block;
+        }
+
+        .card {
+            background: white;
+            border-radius: 15px;
+            padding: 25px;
+            margin-bottom: 25px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+        }
+
+        .card-title {
+            color: #1a237e;
+            font-size: 1.5em;
+            font-weight: 700;
+            margin-bottom: 20px;
+        }
+
+        .schedule-item {
+            display: flex;
+            align-items: center;
+            padding: 15px;
+            background: #f8f9fa;
+            border-radius: 10px;
+            border-left: 4px solid #ff7849;
+            margin-bottom: 10px;
+            transition: all 0.3s ease;
+        }
+
+        .schedule-item:hover {
+            background: #e3f2fd;
+            transform: translateX(5px);
+        }
+
+        .schedule-item.completed {
+            background: #e8f5e8;
+            border-left-color: #4caf50;
+        }
+
+        .schedule-time {
+            color: #1a237e;
+            font-weight: 600;
+            min-width: 80px;
+        }
+
+        .schedule-activity {
+            flex: 1;
+            margin-left: 15px;
+        }
+
+        .schedule-checkbox {
+            width: 20px;
+            height: 20px;
+            margin-right: 10px;
+        }
+
+        .completed-by {
+            font-size: 0.9em;
+            color: #4caf50;
+            font-style: italic;
+        }
+
+        .post-form {
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 25px;
+        }
+
+        .post-input {
+            width: 100%;
+            padding: 15px;
+            border: 2px solid #e0e0e0;
+            border-radius: 10px;
+            font-size: 1em;
+            margin-bottom: 15px;
+            resize: vertical;
+            min-height: 100px;
+        }
+
+        .post-btn {
+            background: #ff7849;
+            color: white;
+            border: none;
+            padding: 12px 25px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+        }
+
+        .post-btn:hover {
+            background: #ff5722;
+        }
+
+        .post {
+            background: white;
+            border: 1px solid #e0e0e0;
+            border-radius: 10px;
+            padding: 20px;
+            margin-bottom: 20px;
+        }
+
+        .post-header {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 15px;
+        }
+
+        .post-author {
+            color: #1a237e;
+            font-weight: 600;
+        }
+
+        .post-time {
+            color: #666;
+            font-size: 0.9em;
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                padding: 10px;
+            }
+            .user-buttons {
+                flex-direction: column;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <div class="header">
+            <h1 class="app-title">🐾 Dylan's Training Journey</h1>
+            <p class="puppy-info">Blue Roan English Cocker Spaniel • Week 9 • 0 days with family</p>
+        </div>
+
+        <!-- Login Section -->
+        <div class="login-section">
+            <h3 style="color: #1a237e; margin-bottom: 20px;">👋 Who's logging in?</h3>
+            <div class="user-buttons">
+                <button class="user-btn" onclick="selectUser('Tim', this)">Tim</button>
+                <button class="user-btn" onclick="selectUser('Julia', this)">Julia</button>
+                <button class="user-btn" onclick="selectUser('Other', this)">Other</button>
+            </div>
+            <div class="current-user" id="current-user-display">Please select a user</div>
+        </div>
+
+        <!-- Navigation -->
+        <div class="nav-tabs">
+            <div class="nav-tab active" onclick="showSection('home', this)">🏠 Today</div>
+            <div class="nav-tab" onclick="showSection('community', this)">📝 Community</div>
+            <div class="nav-tab" onclick="showSection('progress', this)">📊 Progress</div>
+            <div class="nav-tab" onclick="showSection('health', this)">🏥 Health</div>
+            <div class="nav-tab" onclick="showSection('weekly', this)">📅 Weekly</div>
+        </div>
+
+        <!-- Home Section -->
+        <div class="content-section active" id="home">
+            <div class="card">
+                <h2 class="card-title">📅 Today's Schedule - Monday, June 30, 2025</h2>
+                <div id="today-schedule">
+                    <div class="schedule-item">
+                        <input type="checkbox" class="schedule-checkbox" onchange="toggleTask(this)">
+                        <div class="schedule-time">7:00 AM</div>
+                        <div class="schedule-activity">
+                            <div>Wake up & potty break</div>
+                        </div>
+                    </div>
+                    <div class="schedule-item">
+                        <input type="checkbox" class="schedule-checkbox" onchange="toggleTask(this)">
+                        <div class="schedule-time">7:15 AM</div>
+                        <div class="schedule-activity">
+                            <div>Breakfast + water</div>
+                        </div>
+                    </div>
+                    <div class="schedule-item">
+                        <input type="checkbox" class="schedule-checkbox" onchange="toggleTask(this)">
+                        <div class="schedule-time">7:30 AM</div>
+                        <div class="schedule-activity">
+                            <div>Post-meal potty break</div>
+                        </div>
+                    </div>
+                    <div class="schedule-item">
+                        <input type="checkbox" class="schedule-checkbox" onchange="toggleTask(this)">
+                        <div class="schedule-time">7:45 AM</div>
+                        <div class="schedule-activity">
+                            <div>Light play/training session (3-5 mins)</div>
+                        </div>
+                    </div>
+                    <div class="schedule-item">
+                        <input type="checkbox" class="schedule-checkbox" onchange="toggleTask(this)">
+                        <div class="schedule-time">8:30 AM</div>
+                        <div class="schedule-activity">
+                            <div>Nap time (in crate)</div>
+                        </div>
+                    </div>
+                    <div class="schedule-item">
+                        <input type="checkbox" class="schedule-checkbox" onchange="toggleTask(this)">
+                        <div class="schedule-time">10:00 AM</div>
+                        <div class="schedule-activity">
+                            <div>Potty + play/training</div>
+                        </div>
+                    </div>
+                    <div class="schedule-item">
+                        <input type="checkbox" class="schedule-checkbox" onchange="toggleTask(this)">
+                        <div class="schedule-time">12:30 PM</div>
+                        <div class="schedule-activity">
+                            <div>Potty + lunch</div>
+                        </div>
+                    </div>
+                    <div class="schedule-item">
+                        <input type="checkbox" class="schedule-checkbox" onchange="toggleTask(this)">
+                        <div class="schedule-time">1:00 PM</div>
+                        <div class="schedule-activity">
+                            <div>Short walk & exploration</div>
+                        </div>
+                    </div>
+                    <div class="schedule-item">
+                        <input type="checkbox" class="schedule-checkbox" onchange="toggleTask(this)">
+                        <div class="schedule-time">3:30 PM</div>
+                        <div class="schedule-activity">
+                            <div>Potty + playtime</div>
+                        </div>
+                    </div>
+                    <div class="schedule-item">
+                        <input type="checkbox" class="schedule-checkbox" onchange="toggleTask(this)">
+                        <div class="schedule-time">5:00 PM</div>
+                        <div class="schedule-activity">
+                            <div>Dinner time</div>
+                        </div>
+                    </div>
+                    <div class="schedule-item">
+                        <input type="checkbox" class="schedule-checkbox" onchange="toggleTask(this)">
+                        <div class="schedule-time">6:00 PM</div>
+                        <div class="schedule-activity">
+                            <div>Training + calm play</div>
+                        </div>
+                    </div>
+                    <div class="schedule-item">
+                        <input type="checkbox" class="schedule-checkbox" onchange="toggleTask(this)">
+                        <div class="schedule-time">9:00 PM</div>
+                        <div class="schedule-activity">
+                            <div>Final potty break</div>
+                        </div>
+                    </div>
+                    <div class="schedule-item">
+                        <input type="checkbox" class="schedule-checkbox" onchange="toggleTask(this)">
+                        <div class="schedule-time">9:30 PM</div>
+                        <div class="schedule-activity">
+                            <div>Bedtime (crate)</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card">
+                <h2 class="card-title">🚨 Reminders</h2>
+                <p style="color: #ff7849; font-weight: 600;">Dylan arrives in 5 days! 🎉</p>
+                <p style="margin-top: 10px;">Get ready: crate, food bowls, toys, and training treats!</p>
+            </div>
+        </div>
+
+        <!-- Community Section -->
+        <div class="content-section" id="community">
+            <div class="card">
+                <h2 class="card-title">📋 Community Poster Board</h2>
+                <div class="post-form">
+                    <textarea class="post-input" id="new-post" placeholder="Share an update about Dylan's progress, a cute moment, or anything else!"></textarea>
+                    <button class="post-btn" onclick="addPost()">📝 Post Update</button>
+                </div>
+                <div id="posts-container">
+                    <!-- Posts will appear here -->
+                </div>
+            </div>
+        </div>
+
+        <!-- Progress Section -->
+        <div class="content-section" id="progress">
+            <div class="card">
+                <h2 class="card-title">🧠 Command Training Progress</h2>
+                <p>Progress tracking will be available once Dylan arrives and training begins!</p>
+            </div>
+        </div>
+
+        <!-- Health Section -->
+        <div class="content-section" id="health">
+            <div class="card">
+                <h2 class="card-title">📊 Health Tracking</h2>
+                <p>Health metrics will be tracked once Dylan arrives!</p>
+            </div>
+        </div>
+
+        <!-- Weekly Section -->
+        <div class="content-section" id="weekly">
+            <div class="card">
+                <h2 class="card-title">📅 Weekly Reflection</h2>
+                <textarea style="width: 100%; min-height: 200px; padding: 15px; border: 2px solid #e0e0e0; border-radius: 10px;" placeholder="Weekly notes and reflections will go here..."></textarea>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let currentUser = null;
+
+        function selectUser(username, button) {
+            currentUser = username;
+            document.getElementById('current-user-display').textContent = `Logged in as: ${username}`;
+            
+            // Remove active class from all buttons
+            document.querySelectorAll('.user-btn').forEach(btn => btn.classList.remove('active'));
+            // Add active class to clicked button
+            button.classList.add('active');
+        }
+
+        function showSection(sectionId, tab) {
+            // Hide all sections
+            document.querySelectorAll('.content-section').forEach(section => {
+                section.classList.remove('active');
+            });
+            
+            // Remove active from all tabs
+            document.querySelectorAll('.nav-tab').forEach(t => {
+                t.classList.remove('active');
+            });
+            
+            // Show selected section and activate tab
+            document.getElementById(sectionId).classList.add('active');
+            tab.classList.add('active');
+        }
+
+        function toggleTask(checkbox) {
+            if (!currentUser) {
+                alert('Please select a user first!');
+                checkbox.checked = false;
+                return;
+            }
+            
+            const scheduleItem = checkbox.closest('.schedule-item');
+            const activityDiv = scheduleItem.querySelector('.schedule-activity');
+            
+            if (checkbox.checked) {
+                scheduleItem.classList.add('completed');
+                // Remove existing completed-by text
+                const existingCompletedBy = activityDiv.querySelector('.completed-by');
+                if (existingCompletedBy) {
+                    existingCompletedBy.remove();
+                }
+                // Add new completed-by text
+                const completedBy = document.createElement('div');
+                completedBy.className = 'completed-by';
+                completedBy.textContent = `✅ Completed by ${currentUser}`;
+                activityDiv.appendChild(completedBy);
+            } else {
+                scheduleItem.classList.remove('completed');
+                const completedBy = activityDiv.querySelector('.completed-by');
+                if (completedBy) {
+                    completedBy.remove();
+                }
+            }
+        }
+
+        function addPost() {
+            if (!currentUser) {
+                alert('Please select a user first!');
+                return;
+            }
+            
+            const postInput = document.getElementById('new-post');
+            const content = postInput.value.trim();
+            
+            if (!content) {
+                alert('Please enter some content for your post!');
+                return;
+            }
+            
+            const postsContainer = document.getElementById('posts-container');
+            const newPost = document.createElement('div');
+            newPost.className = 'post';
+            
+            const now = new Date();
+            const timeString = now.toLocaleDateString('en-US', { 
+                year: 'numeric', 
+                month: 'long', 
+                day: 'numeric',
+                hour: '2-digit',
+                minute: '2-digit'
+            });
+            
+            newPost.innerHTML = `
+                <div class="post-header">
+                    <span class="post-author">${currentUser}</span>
+                    <span class="post-time">${timeString}</span>
+                </div>
+                <div>${content}</div>
+            `;
+            
+            // Add the new post at the top
+            postsContainer.insertBefore(newPost, postsContainer.firstChild);
+            
+            // Clear the input
+            postInput.value = '';
+        }
+    </script>
+</body>
+</html>
