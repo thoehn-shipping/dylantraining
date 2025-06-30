@@ -300,7 +300,7 @@
                         <input type="checkbox" class="schedule-checkbox" onchange="toggleTask(this)">
                         <div class="schedule-time">7:15 AM</div>
                         <div class="schedule-activity">
-                            <div>Breakfast + water</div>
+                            <div>Breakfast (1st feeding)</div>
                         </div>
                     </div>
                     <div class="schedule-item">
@@ -333,16 +333,30 @@
                     </div>
                     <div class="schedule-item">
                         <input type="checkbox" class="schedule-checkbox" onchange="toggleTask(this)">
+                        <div class="schedule-time">11:30 AM</div>
+                        <div class="schedule-activity">
+                            <div>Mid-morning nap</div>
+                        </div>
+                    </div>
+                    <div class="schedule-item">
+                        <input type="checkbox" class="schedule-checkbox" onchange="toggleTask(this)">
                         <div class="schedule-time">12:30 PM</div>
                         <div class="schedule-activity">
-                            <div>Potty + lunch</div>
+                            <div>Lunch (2nd feeding) + potty</div>
                         </div>
                     </div>
                     <div class="schedule-item">
                         <input type="checkbox" class="schedule-checkbox" onchange="toggleTask(this)">
                         <div class="schedule-time">1:00 PM</div>
                         <div class="schedule-activity">
-                            <div>Short walk & exploration</div>
+                            <div>Short walk & exploration (not too far without shots)</div>
+                        </div>
+                    </div>
+                    <div class="schedule-item">
+                        <input type="checkbox" class="schedule-checkbox" onchange="toggleTask(this)">
+                        <div class="schedule-time">2:00 PM</div>
+                        <div class="schedule-activity">
+                            <div>Afternoon nap</div>
                         </div>
                     </div>
                     <div class="schedule-item">
@@ -354,9 +368,16 @@
                     </div>
                     <div class="schedule-item">
                         <input type="checkbox" class="schedule-checkbox" onchange="toggleTask(this)">
+                        <div class="schedule-time">4:30 PM</div>
+                        <div class="schedule-activity">
+                            <div>Afternoon snack (3rd feeding)</div>
+                        </div>
+                    </div>
+                    <div class="schedule-item">
+                        <input type="checkbox" class="schedule-checkbox" onchange="toggleTask(this)">
                         <div class="schedule-time">5:00 PM</div>
                         <div class="schedule-activity">
-                            <div>Dinner time</div>
+                            <div>Dinner (4th feeding)</div>
                         </div>
                     </div>
                     <div class="schedule-item">
@@ -431,6 +452,7 @@
 
     <script>
         let currentUser = null;
+        let posts = []; // Array to store all posts
 
         function selectUser(username, button) {
             currentUser = username;
@@ -503,33 +525,72 @@
                 return;
             }
             
-            const postsContainer = document.getElementById('posts-container');
-            const newPost = document.createElement('div');
-            newPost.className = 'post';
-            
             const now = new Date();
-            const timeString = now.toLocaleDateString('en-US', { 
-                year: 'numeric', 
-                month: 'long', 
-                day: 'numeric',
-                hour: '2-digit',
-                minute: '2-digit'
-            });
             
-            newPost.innerHTML = `
-                <div class="post-header">
-                    <span class="post-author">${currentUser}</span>
-                    <span class="post-time">${timeString}</span>
-                </div>
-                <div>${content}</div>
-            `;
+            // Create post object with timestamp for sorting
+            const newPost = {
+                id: Date.now(), // Unique ID
+                author: currentUser,
+                content: content,
+                timestamp: now,
+                timeString: now.toLocaleDateString('en-US', { 
+                    year: 'numeric', 
+                    month: 'long', 
+                    day: 'numeric',
+                    hour: '2-digit',
+                    minute: '2-digit'
+                })
+            };
             
-            // Add the new post at the top
-            postsContainer.insertBefore(newPost, postsContainer.firstChild);
+            // Add to posts array
+            posts.push(newPost);
+            
+            // Save to localStorage so posts persist
+            localStorage.setItem('dylanPosts', JSON.stringify(posts));
             
             // Clear the input
             postInput.value = '';
+            
+            // Refresh the posts display
+            displayPosts();
         }
+
+        function displayPosts() {
+            const postsContainer = document.getElementById('posts-container');
+            postsContainer.innerHTML = '';
+            
+            // Sort posts by timestamp (newest first)
+            const sortedPosts = posts.sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp));
+            
+            sortedPosts.forEach(post => {
+                const postElement = document.createElement('div');
+                postElement.className = 'post';
+                
+                postElement.innerHTML = `
+                    <div class="post-header">
+                        <span class="post-author">${post.author}</span>
+                        <span class="post-time">${post.timeString}</span>
+                    </div>
+                    <div>${post.content}</div>
+                `;
+                
+                postsContainer.appendChild(postElement);
+            });
+        }
+
+        // Load posts when page loads
+        function loadPosts() {
+            const savedPosts = localStorage.getItem('dylanPosts');
+            if (savedPosts) {
+                posts = JSON.parse(savedPosts);
+                displayPosts();
+            }
+        }
+
+        // Initialize the app
+        window.onload = function() {
+            loadPosts();
+        };
     </script>
 </body>
 </html>
