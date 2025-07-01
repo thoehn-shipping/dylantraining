@@ -9,6 +9,22 @@
             margin: 0;
             padding: 0;
             box-sizing: border-box;
+        @media (max-width: 768px) {
+            .container {
+                padding: 10px;
+            }
+            .user-buttons {
+                flex-direction: column;
+            }
+            .goal-header {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+            .goal-progress {
+                text-align: left;
+                width: 100%;
+                margin-top: 10px;
+            }
         }
 
         body {
@@ -246,13 +262,78 @@
             font-size: 0.9em;
         }
 
-        @media (max-width: 768px) {
-            .container {
-                padding: 10px;
-            }
-            .user-buttons {
-                flex-direction: column;
-            }
+        .training-goal {
+            background: linear-gradient(135deg, #fff8f0 0%, #ffe8d4 100%);
+            border: 2px solid #ff7849;
+            border-radius: 15px;
+            padding: 25px;
+        }
+
+        .goal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+            flex-wrap: wrap;
+        }
+
+        .goal-header h3 {
+            color: #1a237e;
+            font-size: 1.3em;
+            margin: 0;
+        }
+
+        .goal-progress {
+            text-align: right;
+            min-width: 200px;
+        }
+
+        .progress-text {
+            color: #ff7849;
+            font-weight: 600;
+            font-size: 0.9em;
+        }
+
+        .goal-description {
+            color: #444;
+            line-height: 1.6;
+            margin-bottom: 20px;
+            font-style: italic;
+        }
+
+        .goal-tracker h4 {
+            color: #1a237e;
+        }
+
+        .practice-sessions {
+            display: grid;
+            gap: 10px;
+        }
+
+        .session-item {
+            display: flex;
+            align-items: center;
+            padding: 10px;
+            background: white;
+            border-radius: 8px;
+            border-left: 3px solid #ff7849;
+        }
+
+        .session-item input[type="checkbox"] {
+            margin-right: 10px;
+            width: 18px;
+            height: 18px;
+        }
+
+        .session-item label {
+            cursor: pointer;
+            flex: 1;
+        }
+
+        .session-item input[type="checkbox"]:checked + label {
+            text-decoration: line-through;
+            color: #4caf50;
+            font-weight: 600;
         }
     </style>
 </head>
@@ -286,6 +367,47 @@
 
         <!-- Home Section -->
         <div class="content-section active" id="home">
+            <div class="card">
+                <h2 class="card-title">🎯 Training Goal of the Day</h2>
+                <div id="training-goal-container">
+                    <div class="training-goal">
+                        <div class="goal-header">
+                            <h3 id="goal-title">Name Recognition Training</h3>
+                            <div class="goal-progress">
+                                <span class="progress-text" id="goal-progress-text">0% Complete</span>
+                                <div class="progress-bar">
+                                    <div class="progress-fill" id="goal-progress-bar" style="width: 0%"></div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="goal-description" id="goal-description">
+                            Practice saying "Dylan!" and reward her when she looks at you. Start with treats and lots of praise. Do this 5-10 times throughout the day during play and feeding.
+                        </div>
+                        <div class="goal-tracker">
+                            <h4 style="margin-bottom: 10px;">Today's Progress:</h4>
+                            <div class="practice-sessions">
+                                <div class="session-item">
+                                    <input type="checkbox" id="session-1" onchange="updateGoalProgress()">
+                                    <label for="session-1">Morning session (5 reps)</label>
+                                </div>
+                                <div class="session-item">
+                                    <input type="checkbox" id="session-2" onchange="updateGoalProgress()">
+                                    <label for="session-2">Lunch session (5 reps)</label>
+                                </div>
+                                <div class="session-item">
+                                    <input type="checkbox" id="session-3" onchange="updateGoalProgress()">
+                                    <label for="session-3">Afternoon session (5 reps)</label>
+                                </div>
+                                <div class="session-item">
+                                    <input type="checkbox" id="session-4" onchange="updateGoalProgress()">
+                                    <label for="session-4">Evening session (5 reps)</label>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
             <div class="card">
                 <h2 class="card-title">📅 Today's Schedule - Monday, June 30, 2025</h2>
                 <div id="today-schedule">
@@ -453,6 +575,158 @@
     <script>
         let currentUser = null;
         let posts = []; // Array to store all posts
+        
+        // Training goals by week
+        const trainingGoals = {
+            9: {
+                title: "Name Recognition Training",
+                description: "Practice saying 'Dylan!' and reward her when she looks at you. Start with treats and lots of praise. Do this 5-10 times throughout the day during play and feeding.",
+                sessions: [
+                    "Morning session (5 reps)",
+                    "Lunch session (5 reps)", 
+                    "Afternoon session (5 reps)",
+                    "Evening session (5 reps)"
+                ]
+            },
+            10: {
+                title: "Crate Training Focus",
+                description: "Make the crate a positive space. Feed meals in the crate, place favorite toys inside, and practice short stays with the door open. Gradually increase time.",
+                sessions: [
+                    "Morning crate feeding",
+                    "Midday crate play (10 mins)",
+                    "Afternoon rest in crate",
+                    "Evening crate treat time"
+                ]
+            },
+            11: {
+                title: "Basic 'Sit' Command",
+                description: "Hold treat above Dylan's head, slowly move back. When she naturally sits, say 'Sit!' and give treat immediately. Practice during meal times.",
+                sessions: [
+                    "Pre-breakfast sit practice",
+                    "Lunch time sits",
+                    "Afternoon snack sits", 
+                    "Dinner time sits"
+                ]
+            },
+            12: {
+                title: "Come When Called",
+                description: "Start indoors in a small space. Say 'Dylan, come!' in a happy voice, crouch down with arms open. Reward heavily when she approaches.",
+                sessions: [
+                    "Morning come practice",
+                    "Midday recall games",
+                    "Afternoon come training",
+                    "Evening recall fun"
+                ]
+            },
+            13: {
+                title: "Leave It Command",
+                description: "Place treat in closed fist, say 'Leave it'. Wait for Dylan to stop pawing/sniffing, then reward with different treat. Build impulse control.",
+                sessions: [
+                    "Morning impulse control",
+                    "Lunch leave-it practice",
+                    "Afternoon self-control",
+                    "Evening patience training"
+                ]
+            },
+            14: {
+                title: "Down Command",
+                description: "From sit position, lower treat to ground between paws, slowly pull forward. When Dylan lies down, say 'Down!' and reward immediately.",
+                sessions: [
+                    "Morning down practice",
+                    "Lunch relaxation downs",
+                    "Afternoon calm downs",
+                    "Evening settle downs"
+                ]
+            },
+            15: {
+                title: "Stay Command",
+                description: "Start with Dylan in sit, hold hand up like 'stop', take one step back. If she stays for 2 seconds, return and reward. Gradually increase time/distance.",
+                sessions: [
+                    "Morning stay practice",
+                    "Lunch short stays",
+                    "Afternoon longer stays",
+                    "Evening patience stays"
+                ]
+            },
+            16: {
+                title: "Leash Training Basics",
+                description: "Start indoors with leash on. Let Dylan drag it around, then pick it up and follow her. Reward when she doesn't pull. Practice walking together.",
+                sessions: [
+                    "Morning leash comfort",
+                    "Midday indoor walking",
+                    "Afternoon leash games",
+                    "Evening loose leash practice"
+                ]
+            }
+        };
+
+        function getCurrentWeek() {
+            // For demo purposes, starting at week 9
+            // In real app, calculate based on Dylan's age/adoption date
+            return 9;
+        }
+
+        function loadTrainingGoal() {
+            const currentWeek = getCurrentWeek();
+            const goal = trainingGoals[currentWeek];
+            
+            if (goal) {
+                document.getElementById('goal-title').textContent = goal.title;
+                document.getElementById('goal-description').textContent = goal.description;
+                
+                // Update session checkboxes
+                const sessions = document.querySelectorAll('.session-item');
+                sessions.forEach((session, index) => {
+                    if (goal.sessions[index]) {
+                        const checkbox = session.querySelector('input[type="checkbox"]');
+                        const label = session.querySelector('label');
+                        checkbox.id = `session-${index + 1}`;
+                        label.setAttribute('for', `session-${index + 1}`);
+                        label.textContent = goal.sessions[index];
+                    }
+                });
+            }
+            
+            // Load saved progress
+            loadGoalProgress();
+        }
+
+        function updateGoalProgress() {
+            const checkboxes = document.querySelectorAll('.session-item input[type="checkbox"]');
+            const completed = Array.from(checkboxes).filter(cb => cb.checked).length;
+            const total = checkboxes.length;
+            const percentage = Math.round((completed / total) * 100);
+            
+            // Update progress display
+            document.getElementById('goal-progress-text').textContent = `${percentage}% Complete`;
+            document.getElementById('goal-progress-bar').style.width = `${percentage}%`;
+            
+            // Save progress
+            const currentWeek = getCurrentWeek();
+            const progressKey = `week-${currentWeek}-progress`;
+            const progress = {};
+            checkboxes.forEach((cb, index) => {
+                progress[`session-${index + 1}`] = cb.checked;
+            });
+            localStorage.setItem(progressKey, JSON.stringify(progress));
+        }
+
+        function loadGoalProgress() {
+            const currentWeek = getCurrentWeek();
+            const progressKey = `week-${currentWeek}-progress`;
+            const saved = localStorage.getItem(progressKey);
+            
+            if (saved) {
+                const progress = JSON.parse(saved);
+                Object.keys(progress).forEach(sessionId => {
+                    const checkbox = document.getElementById(sessionId);
+                    if (checkbox) {
+                        checkbox.checked = progress[sessionId];
+                    }
+                });
+                updateGoalProgress();
+            }
+        }
 
         function selectUser(username, button) {
             currentUser = username;
@@ -590,6 +864,7 @@
         // Initialize the app
         window.onload = function() {
             loadPosts();
+            loadTrainingGoal();
         };
     </script>
 </body>
